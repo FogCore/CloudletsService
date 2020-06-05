@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+// Methods that Cloudlets Service provides
+service CloudletsAPI {
+  rpc Add (Cloudlet) returns (ResponseWithCloudlet) {}  // Adds a new fog device to the system
+  rpc Find (Cloudlet) returns (ResponseWithCloudletsList) {}  // Returns a list of fog devices with the specified parameters
+  rpc FindNearest (Cloudlet) returns (ResponseWithCloudletsList) {}  // Searches for nearby fog devices
+}
+
+message Cloudlet {
+  string id = 1;
+  string name = 2;
+  uint32 cpu_cores = 3;
+  float cpu_frequency = 4;
+  uint64 ram_size = 5;
+  uint64 rom_size = 6;
+  string os = 7;
+  string os_kernel = 8;
+  string ip = 9;
+  double latitude = 10;
+  double longitude = 11;
+  string country = 12;
+  string region = 13;
+  string city = 14;
+}
+
+message Response {
+  int32 code = 1;
+  string message = 2;
+}
+
+message ResponseWithCloudlet {
+  Response status = 1;
+  Cloudlet cloudlet = 2;
+  string swarm_manager_address = 3;
+  string swarm_worker_token = 4;
+}
+
+message ResponseWithCloudletsList {
+  Response status = 1;
+  repeated Cloudlet cloudlets = 2;
+}
+
+
+// Scheduling Service methods used by Cloudlets Service
+service SchedulingAPI {
+  rpc SwarmManager (Empty) returns (ResponseWithManager) {}  // Returns the Docker Swarm Manager IP address and token to add a new worker
+}
+
+message Empty {
+}
+
+message Manager {
+  string address = 1;
+  string join_worker_token = 2;
+}
+
+message ResponseWithManager {
+  Response status = 1;
+  Manager manager = 2;
+}
